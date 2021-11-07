@@ -20,9 +20,10 @@ func main() {
 	client, _ = mongo.Connect(ctx, clientOptions)
 	fmt.Println("Starting the NewRouter...")
 	router := mux.NewRouter()
-	router.HandleFunc("/person", CreateUserEndpoint).Methods("POST")
-	router.HandleFunc("/person/{id}", GetUserEndpoint).Methods("GET")
-	router.HandleFunc("/login" ,Login).Methods("POST")
+	router.HandleFunc("/user", CreateUserEndpoint).Methods("POST")
+	router.HandleFunc("/user/{id}", GetUserEndpoint).Methods("GET")
+	router.HandleFunc("/login/{password}/{username}" ,Login).Methods("POST")
+	router.HandleFunc("/test/{test}" ,Test).Methods("GET")
 	http.ListenAndServe(":1332", router)
 
 }

@@ -30,6 +30,12 @@ func Login(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
+func Test(response http.ResponseWriter, request *http.Request) {
+
+	params := mux.Vars(request)
+	test := params["test"]
+		json.NewEncoder(response).Encode(test)
+}
 
 func token(c echo.Context) error {
 	type tokenReqBody struct {
