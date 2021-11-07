@@ -17,7 +17,7 @@ func main() {
 	fmt.Println("Starting the application...")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	clientOptions := options.Client().
-		ApplyURI("mongodb+srv://Wielok:<Projekt123>@cluster0.a3zgx.mongodb.net/TestDB?retryWrites=true&w=majority")
+		ApplyURI("mongodb+srv://Wielok:Projekt123@cluster0.a3zgx.mongodb.net/TestDB?retryWrites=true&w=majority")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, _ = mongo.Connect(ctx, clientOptions)

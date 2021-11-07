@@ -18,11 +18,15 @@ type User struct {
 
 func CreateUserEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
-	var person User
-	_ = json.NewDecoder(request.Body).Decode(&person)
+	var user User
+	_ = json.NewDecoder(request.Body).Decode(&user)
 	collection := client.Database("TestDB").Collection("Users")
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	result, _ := collection.InsertOne(ctx, person)
+	ctx,_ := context.WithTimeout(context.Background(), 5*time.Second)
+	result, _ := collection.InsertOne(ctx, user)
+
+
+		json.NewEncoder(response).Encode(user)
+
 	json.NewEncoder(response).Encode(result)
 }
 
