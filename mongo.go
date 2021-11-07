@@ -24,9 +24,6 @@ func CreateUserEndpoint(response http.ResponseWriter, request *http.Request) {
 	ctx,_ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, _ := collection.InsertOne(ctx, user)
 
-
-		json.NewEncoder(response).Encode(user)
-
 	json.NewEncoder(response).Encode(result)
 }
 
