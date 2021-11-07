@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
@@ -10,24 +12,26 @@ import (
 
 type handler struct{}
 
-func (h *handler) login(c echo.Context) error {
-	username := c.FormValue("username")
-	password := c.FormValue("password")
+func Login(response http.ResponseWriter, request *http.Request) {
 
+	params := mux.Vars(request)
+	username := params["username"]
+	password := params["password"]
 
 	if username == "jon" && password == "password" {
 		tokens, err := generateTokenPair()
 		if err != nil {
-			return err
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
+			return
 		}
 
-		return c.JSON(http.StatusOK, tokens)
+		json.NewEncoder(response).Encode(tokens)
 	}
-
-	return echo.ErrUnauthorized
 }
 
-func (h *handler) token(c echo.Context) error {
+
+func token(c echo.Context) error {
 	type tokenReqBody struct {
 		RefreshToken string `json:"refresh_token"`
 	}
@@ -58,7 +62,7 @@ func (h *handler) token(c echo.Context) error {
 	return err
 }
 
-func (h *handler) private(c echo.Context) error {
+func private(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 	name := claims["name"].(string)
