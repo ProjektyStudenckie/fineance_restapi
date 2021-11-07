@@ -1,24 +1,29 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
-type handler struct{}
 
 func Login(response http.ResponseWriter, request *http.Request) {
 
 	params := mux.Vars(request)
 	username := params["username"]
 	password := params["password"]
+	var user User
+	collection := client.Database("TestDB").Collection("Users")
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	if username == "jon" && password == "password" {
+	_ = collection.FindOne(ctx, User{Username: username}).Decode(&user)
+	if  password == user.Password {
 		tokens, err := generateTokenPair()
 		if err != nil {
 			response.WriteHeader(http.StatusInternalServerError)
