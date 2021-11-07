@@ -16,7 +16,10 @@ var client *mongo.Client
 func main() {
 	fmt.Println("Starting the application...")
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	clientOptions := options.Client().ApplyURI("cluster0-shard-00-02.a3zgx.mongodb.net:27017")
+	clientOptions := options.Client().
+		ApplyURI("mongodb+srv://Wielok:<Projekt123>@cluster0.a3zgx.mongodb.net/TestDB?retryWrites=true&w=majority")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	client, _ = mongo.Connect(ctx, clientOptions)
 	fmt.Println("Starting the NewRouter...")
 	router := mux.NewRouter()

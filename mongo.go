@@ -11,7 +11,7 @@ import (
 
 type User struct {
 	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Nick string             `json:"nick,omitempty" bson:"nick ,omitempty"`
+	Username string             `json:"username,omitempty" bson:"username ,omitempty"`
 	Password  string             `json:"password,omitempty" bson:"password,omitempty"`
 }
 
@@ -30,15 +30,15 @@ func GetUserEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	params := mux.Vars(request)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
-	var person User
+	var user User
 	collection := client.Database("TestDB").Collection("Users")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	err := collection.FindOne(ctx, User{ID: id}).Decode(&person)
+	err := collection.FindOne(ctx, User{ID: id}).Decode(&user)
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
 		return
 	}
-	json.NewEncoder(response).Encode(person)
+	json.NewEncoder(response).Encode(user)
 }
 
