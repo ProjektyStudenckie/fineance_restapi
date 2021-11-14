@@ -1,14 +1,11 @@
 package http
 
 import (
-	"ApiRest/internal/auth"
-	"ApiRest/internal/mongo"
-	"context"
-	"encoding/json"
+	auth2 "ApiRest/internal/auth"
+	mongo2 "ApiRest/internal/mongo"
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
-	"time"
 )
 
 type Handler struct{
@@ -25,33 +22,9 @@ func (h *Handler) SetupRoutes(){
 	h.Router.HandleFunc("/api/health",func(w http.ResponseWriter, r *http.Request){
 		fmt.Fprintf(w,"alive")
 	})
+	h.Router.HandleFunc("/user", mongo2.CreateUserEndpoint).Methods("POST")
+	h.Router.HandleFunc("/user/{id}", mongo2.GetUserEndpoint).Methods("GET")
+	h.Router.HandleFunc("/login/{password}/{username}", auth2.Login).Methods("POST")
+	h.Router.HandleFunc("/test/{test}", auth2.Test).Methods("GET")
 }
 
-func Login(response http.ResponseWriter, request *http.Request) {
-
-	params := mux.Vars(request)
-	username := params["username"]
-	password := params["password"]
-	var user mongo.User
-	collection := mongo.Client.Database("TestDB").Collection("Users")
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-
-	_ = collection.FindOne(ctx, mongo.User{Username: username}).Decode(&user)
-	if  password == user.Password {
-		tokens, err := auth.GenerateTokenPair()
-		if err != nil {
-			response.WriteHeader(http.StatusInternalServerError)
-			response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
-			return
-		}
-
-		json.NewEncoder(response).Encode(tokens)
-	}
-}
-
-func Test(response http.ResponseWriter, request *http.Request) {
-
-	params := mux.Vars(request)
-	test := params["test"]
-		json.NewEncoder(response).Encode(test)
-}

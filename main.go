@@ -18,6 +18,13 @@ type App struct{}
 
 func (app *App) Run() error {
 	fmt.Println("Setting Up Rest Api")
+	handler := http2.NewHandler()
+	handler.SetupRoutes()
+
+	if err := http.ListenAndServe(":1332", handler.Router); err !=nil{
+		fmt.Println("Failed to setup")
+		return err
+	}
 	return nil
 }
 
@@ -29,18 +36,14 @@ func main() {
 		fmt.Println(err)
 	}
 
+
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	clientOptions := options.Client().
 		ApplyURI("mongodb+srv://Wielok:Projekt123@cluster0.a3zgx.mongodb.net/TestDB?retryWrites=true&w=majority")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	mongo2.Client, _ = mongo.Connect(ctx, clientOptions)
-	fmt.Println("Starting the NewRouter...")
 	router := mux.NewRouter()
-	router.HandleFunc("/user", mongo2.CreateUserEndpoint).Methods("POST")
-	router.HandleFunc("/user/{id}", mongo2.GetUserEndpoint).Methods("GET")
-	router.HandleFunc("/login/{password}/{username}", http2.Login).Methods("POST")
-	router.HandleFunc("/test/{test}", http2.Test).Methods("GET")
 	http.ListenAndServe(":1332", router)
 
 }

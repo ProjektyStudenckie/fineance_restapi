@@ -1,18 +1,17 @@
 package auth
 
 import (
-"time"
-
-"github.com/dgrijalva/jwt-go"
+	"ApiRest/internal/mongo"
+	"time"
+	"github.com/dgrijalva/jwt-go"
 )
 
-func GenerateTokenPair() (map[string]string, error) {
+func GenerateTokenPair(user mongo.User) (map[string]string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
 	claims["sub"] = 1
-	claims["name"] = "Jon Doe"
-	claims["admin"] = true
+	claims["name"] = user.Username
 	claims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 
 	t, err := token.SignedString([]byte("secret"))
