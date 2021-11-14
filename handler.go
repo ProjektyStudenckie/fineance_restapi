@@ -7,10 +7,11 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"time"
-
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
+
+var mySigningKey = []byte("captainjacksparrowsayshi")
 
 
 func Login(response http.ResponseWriter, request *http.Request) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
@@ -12,6 +13,10 @@ import (
 
 var client *mongo.Client
 
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
 func main() {
 	fmt.Println("Starting the application...")
@@ -25,8 +30,18 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/user", CreateUserEndpoint).Methods("POST")
 	router.HandleFunc("/user/{id}", GetUserEndpoint).Methods("GET")
-	router.HandleFunc("/login/{password}/{username}" ,Login).Methods("POST")
-	router.HandleFunc("/test/{test}" ,Test).Methods("GET")
+	router.HandleFunc("/login/{password}/{username}", Login).Methods("POST")
+	router.HandleFunc("/test/{test}", Test).Methods("GET")
 	http.ListenAndServe(":1332", router)
 
+}
+
+func Writer(conn *websocket.Conn) {
+
+	for {
+		ticker := time.NewTicker(5 * time.Second)
+		for t := range ticker.C {
+			fmt.Println(t)
+		}
+	}
 }
