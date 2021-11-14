@@ -1,4 +1,4 @@
-package main
+package auth
 
 import (
 "time"
@@ -6,7 +6,7 @@ import (
 "github.com/dgrijalva/jwt-go"
 )
 
-func generateTokenPair() (map[string]string, error) {
+func GenerateTokenPair() (map[string]string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
