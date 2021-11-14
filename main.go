@@ -5,7 +5,6 @@ import (
 	mongo2 "ApiRest/internal/mongo"
 	"context"
 	"fmt"
-	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -43,8 +42,6 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	mongo2.Client, _ = mongo.Connect(ctx, clientOptions)
-	router := mux.NewRouter()
-	http.ListenAndServe(":1332", router)
 
 }
 

@@ -26,5 +26,6 @@ func (h *Handler) SetupRoutes(){
 	h.Router.HandleFunc("/user/{id}", mongo2.GetUserEndpoint).Methods("GET")
 	h.Router.HandleFunc("/login/{password}/{username}", auth2.Login).Methods("POST")
 	h.Router.HandleFunc("/test/{test}", auth2.Test).Methods("GET")
+	http.ListenAndServe(":1332", h.Router)
 }
 
