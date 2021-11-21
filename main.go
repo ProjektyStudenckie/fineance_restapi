@@ -2,20 +2,19 @@ package main
 
 import (
 	http2 "ApiRest/internal/http"
-	mongo2 "ApiRest/internal/mongo"
-	"context"
+	"ApiRest/internal/mongo"
 	"fmt"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
-	"time"
 )
 
 
-type App struct{}
+type App struct{
+}
+
 
 func (app *App) Run() error {
 	fmt.Println("Setting Up Rest Api")
+	mongo.DataBaseCon.SetupDataBaseConnection()
 	handler := http2.NewHandler()
 	handler.SetupRoutes()
 
@@ -33,14 +32,6 @@ func main() {
 		fmt.Println("Error starting Rest Api")
 		fmt.Println(err)
 	}
-
-
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	clientOptions := options.Client().
-		ApplyURI("mongodb+srv://Wielok:Projekt123@cluster0.a3zgx.mongodb.net/TestDB?retryWrites=true&w=majority")
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	mongo2.Client, _ = mongo.Connect(ctx, clientOptions)
 
 }
 

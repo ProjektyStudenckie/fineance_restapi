@@ -22,8 +22,8 @@ func (h *Handler) SetupRoutes(){
 	h.Router.HandleFunc("/api/health",func(w http.ResponseWriter, r *http.Request){
 		fmt.Fprintf(w,"alive")
 	})
-	h.Router.HandleFunc("/user", auth2.Register).Methods("POST")
-	h.Router.HandleFunc("/login/{password}/{username}", auth2.Login).Methods("POST")
+	h.Router.HandleFunc("/user", auth2.Register).Methods("GET")
+	h.Router.HandleFunc("/login", auth2.Login).Methods("GET")
 	h.Router.HandleFunc("/test/{test}", auth2.Test).Methods("GET")
 	h.Router.HandleFunc("/stats", webSockets2.TestSocket)
 	http.ListenAndServe(":1332", h.Router)
