@@ -57,11 +57,12 @@ func Register(response http.ResponseWriter, request *http.Request) {
 	if cur.Err() != nil {
 		token, _ := GenerateLoginToken(user)
 		user.Password = token["login_token"]
+		tokenAccess, _ := GenerateAccessToken(user)
 		rt,_:=GenerateRefreshToken(user)
 		user.RT = rt["refresh_token"]
 		_, err := collection.InsertOne(ctx, user)
 		if err == nil {
-			json.NewEncoder(response).Encode(rt)
+			json.NewEncoder(response).Encode(MergeJSONMaps(tokenAccess,rt))
 		}
 	} else {
 		response.WriteHeader(http.StatusInternalServerError)
