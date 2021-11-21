@@ -5,7 +5,6 @@ import (
 	mongo2 "ApiRest/internal/mongo"
 	"context"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
@@ -45,13 +44,4 @@ func main() {
 
 }
 
-func Writer(conn *websocket.Conn) {
-
-	for {
-		ticker := time.NewTicker(5 * time.Second)
-		for t := range ticker.C {
-			fmt.Println(t)
-		}
-	}
-}
 
