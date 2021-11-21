@@ -24,7 +24,7 @@ func (h *Handler) SetupRoutes(){
 	})
 	h.Router.HandleFunc("/register", auth2.Register).Methods("GET")
 	h.Router.HandleFunc("/login", auth2.Login).Methods("GET")
-	h.Router.HandleFunc("/test/{test}", auth2.Test).Methods("GET")
+	h.Router.HandleFunc("/test/{test}", auth2.MethodAuth(auth2.Test)).Methods("GET")
 	h.Router.HandleFunc("/stats", webSockets2.TestSocket)
 	http.ListenAndServe(":1332", h.Router)
 }

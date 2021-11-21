@@ -2,7 +2,9 @@ package auth
 
 import (
 	"ApiRest/internal/mongo"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"net/http"
 	"time"
 )
 
@@ -38,4 +40,30 @@ func GenerateRefreshToken(user mongo.User) (map[string]string, error) {
 		"refresh_token": rt,
 	}, nil
 
+}
+
+func MethodAuth(original func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		if r.Header["Token"] != nil {
+
+			token, err := jwt.Parse(r.Header["Token"][0], func(token *jwt.Token) (interface{}, error) {
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, fmt.Errorf("There was an error")
+				}
+				return secrret, nil
+			})
+
+			if err != nil {
+				fmt.Fprintf(w, err.Error())
+			}
+
+			if token.Valid {
+				original(w, r)
+			}
+		} else {
+
+			fmt.Fprintf(w, "Not Authorized")
+		}
+	}
 }
