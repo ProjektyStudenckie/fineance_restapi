@@ -54,7 +54,7 @@ func Register(response http.ResponseWriter, request *http.Request) {
 
 	cur := collection.FindOne(ctx, mongo2.User{Username: user.Username})
 
-	if cur.Err() != nil {
+	if cur.Err() == nil {
 		token, _ := GenerateLoginToken(user)
 		user.Password = token["login_token"]
 		tokenAccess, _ := GenerateAccessToken(user)
