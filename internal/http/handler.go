@@ -23,9 +23,9 @@ func (h *Handler) SetupRoutes(){
 		fmt.Fprintf(w,"alive")
 	})
 	h.Router.HandleFunc("/register", auth2.Register).Methods("Post")
-	h.Router.HandleFunc("/login", auth2.Login).Methods("GET")
-	h.Router.HandleFunc("/test/{test}", auth2.MethodAuth(auth2.Test,auth2.SecretAccess)).Methods("GET")
-	h.Router.HandleFunc("/refresh_access", auth2.MethodAuth(auth2.Refresh,auth2.SecretRefresh)).Methods("GET")
+	h.Router.HandleFunc("/login", auth2.Login).Methods("Get")
+	h.Router.HandleFunc("/test/{test}", auth2.MethodAuth(auth2.Test,auth2.SecretAccess)).Methods("Get")
+	h.Router.HandleFunc("/refresh_access", auth2.MethodAuth(auth2.Refresh,auth2.SecretRefresh)).Methods("Get")
 	h.Router.HandleFunc("/stats", webSockets2.TestSocket)
 	http.ListenAndServe(":1332", h.Router)
 }

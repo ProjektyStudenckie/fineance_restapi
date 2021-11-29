@@ -18,6 +18,7 @@ type DataBaseConnection struct{
 
 type User struct {
 	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Email string  				`json:"email,omitempty" bson:"email ,omitempty"`
 	Username string             `json:"username,omitempty" bson:"username ,omitempty"`
 	Password  string             `json:"password,omitempty" bson:"password,omitempty"`
 	RT  string             `json:"rt,omitempty" bson:"rt,omitempty"`

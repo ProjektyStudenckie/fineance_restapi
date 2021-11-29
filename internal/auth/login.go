@@ -10,6 +10,7 @@ import (
 )
 
 func Login(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
 	username, pass, _ := request.BasicAuth()
 	var user mongo2.User
 	collection := mongo2.DataBaseCon.Client.Database("TestDB").Collection("Users")
@@ -24,15 +25,15 @@ func Login(response http.ResponseWriter, request *http.Request) {
 				response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
 				return
 			}
-			tokenAccess, _ := GenerateAccessToken(mongo2.User{Username: username, Password: pass})
-			tokenRT, _ := GenerateRefreshToken(mongo2.User{Username: username, Password: pass})
+			user2:= mongo2.User{Username: username, Password: pass}
+			tokenAccess, _ := GenerateAccessToken(user2)
+			tokenRT, _ := GenerateRefreshToken(user2)
 			user.RT = tokenRT["refresh_token"]
-			cur2,cur3 :=collection.ReplaceOne(ctx,mongo2.User{Username: username},
+			_,_ =collection.ReplaceOne(ctx,mongo2.User{Username: username},
 				user,
 			)
-			fmt.Println(cur2)
-			fmt.Println(cur3)
 			json.NewEncoder(response).Encode(MergeJSONMaps(tokenAccess, tokenRT))
+			return
 		} else {
 			response.WriteHeader(http.StatusInternalServerError)
 			response.Write([]byte(`{ "message": "wrong password" }`))
@@ -97,5 +98,6 @@ func MergeJSONMaps(maps ...map[string]string) (result map[string]string) {
 			result[k] = v
 		}
 	}
+	fmt.Println(result)
 	return result
 }
