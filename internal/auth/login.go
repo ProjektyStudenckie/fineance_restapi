@@ -47,8 +47,8 @@ func Login(response http.ResponseWriter, request *http.Request) {
 
 func Register(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
-	username, pass, _ := request.BasicAuth()
-	user := mongo2.User{Username: username, Password: pass}
+	var user mongo2.User
+	_ = json.NewDecoder(request.Body).Decode(&user)
 	collection := mongo2.DataBaseCon.Client.Database("TestDB").Collection("Users")
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 
