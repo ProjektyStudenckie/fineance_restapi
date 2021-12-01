@@ -40,14 +40,52 @@ func AddSubOwner(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 
 	var reqstruct RequestStruct
+	var wallet Wallet
 	_ = json.NewDecoder(request.Body).Decode(&reqstruct)
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	cur := collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID})
+	cur := collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	wallet.SubOwners=append(wallet.SubOwners, reqstruct.Owner)
+
+	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+		wallet,
+	)
 	json.NewEncoder(response).Encode(cur)
 }
 
+func RemoveSubOwner(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+
+	var reqstruct RequestStruct
+	var wallet Wallet
+	_ = json.NewDecoder(request.Body).Decode(&reqstruct)
+	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+
+	cur := collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	index:= pos(reqstruct.Owner,reqstruct.Wallet.SubOwners)
+	wallet.SubOwners = remove(wallet.SubOwners,index)
+	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+		wallet,
+	)
+	json.NewEncoder(response).Encode(cur)
+}
+
+
+func remove(s []mongo.User, i int) []mongo.User {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
+}
+
+func pos(user mongo.User, value []mongo.User) int {
+	for p, v := range value {
+		if v == user {
+			return p
+		}
+	}
+	return -1
+}
 
 func GetWallets(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")

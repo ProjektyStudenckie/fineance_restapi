@@ -30,6 +30,8 @@ func (h *Handler) SetupRoutes(){
 	h.Router.HandleFunc("/wallets", Wallet.GetSubWallets)
 	h.Router.HandleFunc("/add_wallet", Wallet.AddWallet)
 	h.Router.HandleFunc("/sub_wallets", Wallet.GetWallets)
+	h.Router.HandleFunc("/add_sub_owner", Wallet.AddSubOwner)
+	h.Router.HandleFunc("/remove_sub_owner", Wallet.RemoveSubOwner)
 	h.Router.HandleFunc("/stats", webSockets2.TestSocket)
 
 	http.ListenAndServe(":1332", h.Router)
