@@ -25,6 +25,7 @@ type User struct {
 }
 
 
+
 func (h *DataBaseConnection) SetupDataBaseConnection(){
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	clientOptions := options.Client().
