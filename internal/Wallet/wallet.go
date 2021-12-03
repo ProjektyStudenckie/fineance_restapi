@@ -34,6 +34,7 @@ func AddWallet(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	collection.InsertOne(ctx,wallet)
+	json.NewEncoder(response).Encode(true)
 }
 
 func AddSubOwner(response http.ResponseWriter, request *http.Request) {
@@ -102,7 +103,7 @@ func GetWallets(response http.ResponseWriter, request *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	err = cur.All(ctx,wallets)
+	err = cur.All(ctx,&wallets)
 	if err!=nil{
 		fmt.Println(err)
 		return
@@ -133,7 +134,12 @@ func GetSubWallets(response http.ResponseWriter, request *http.Request) {
 		fmt.Println(err)
 		return
 	}
+	if len(wallets)>0{
+		json.NewEncoder(response).Encode(&wallets)
+	} else{
+		json.NewEncoder(response).Encode("no wallets")
+		return
+	}
 
-	json.NewEncoder(response).Encode(wallets)
 	return
 }
