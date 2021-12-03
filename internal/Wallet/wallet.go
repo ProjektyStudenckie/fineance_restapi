@@ -11,8 +11,8 @@ import (
 )
 
 type RequestStruct struct {
-	Wallet Wallet `json:"wallet,omitempty" bson:"wallet ,omitempty"`
-	Owner mongo.User  `json:"owner,omitempty" bson:"owner ,omitempty"`
+	Wallet Wallet     `json:"wallet,omitempty" bson:"wallet ,omitempty"`
+	User   mongo.User `json:"user,omitempty" bson:"user ,omitempty"`
 }
 
 type Wallet struct {
@@ -46,14 +46,34 @@ func AddSubOwner(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	cur := collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
-	wallet.SubOwners=append(wallet.SubOwners, reqstruct.Owner)
+	_= collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	wallet.SubOwners=append(wallet.SubOwners, reqstruct.User)
 
 	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
 		wallet,
 	)
-	json.NewEncoder(response).Encode(cur)
+	json.NewEncoder(response).Encode(true)
 }
+
+func UpdateWallet(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+
+	var wallet Wallet
+	_ = json.NewDecoder(request.Body).Decode(&wallet)
+	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+
+	_,err :=collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+		wallet,
+	)
+	if err!=nil {
+		json.NewEncoder(response).Encode(false)
+		return
+	}
+	json.NewEncoder(response).Encode(true)
+}
+
+
 
 func RemoveSubOwner(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
@@ -64,13 +84,13 @@ func RemoveSubOwner(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	cur := collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
-	index:= pos(reqstruct.Owner,reqstruct.Wallet.SubOwners)
+	_= collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	index:= pos(reqstruct.User,reqstruct.Wallet.SubOwners)
 	wallet.SubOwners = remove(wallet.SubOwners,index)
 	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
 		wallet,
 	)
-	json.NewEncoder(response).Encode(cur)
+	json.NewEncoder(response).Encode(true)
 }
 
 
