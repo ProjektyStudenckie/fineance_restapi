@@ -32,6 +32,8 @@ func (h *Handler) SetupRoutes(){
 	h.Router.HandleFunc("/wallets", Wallet.GetWallets).Methods("GET")
 	h.Router.HandleFunc("/add_sub_owner", Wallet.AddSubOwner).Methods("POST")
 	h.Router.HandleFunc("/updateWallet", Wallet.UpdateWallet).Methods("POST")
+	h.Router.HandleFunc("/remove_goal", Wallet.RemoveGoal).Methods("POST")
+	h.Router.HandleFunc("/add_goal", Wallet.AddGoal).Methods("POST")
 	h.Router.HandleFunc("/remove_sub_owner", Wallet.RemoveSubOwner).Methods("POST")
 	h.Router.HandleFunc("/stats", webSockets2.TestSocket)
 
