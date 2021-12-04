@@ -73,13 +73,17 @@ func Register(response http.ResponseWriter, request *http.Request) {
 }
 
 func Refresh(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
 	if request.Header["Token"] != nil {
 		var user mongo2.User
 		collection := mongo2.DataBaseCon.Client.Database("TestDB").Collection("Users")
 		ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-		cur := collection.FindOne(ctx, mongo2.User{RT: request.Header["Token"][0]}).Decode(&user)
-		if cur == nil {
+		fmt.Println(request.Header["Token"][0])
+		cur := collection.FindOne(ctx, mongo2.User{RT: request.Header["Token"][0]})
+		if cur.Err() == nil {
+			cur.Decode(&user)
+			fmt.Println(user.Username)
 			tokenAccess, _ := GenerateAccessToken(user)
 			tokenRT, _ := GenerateRefreshToken(user)
 			user.RT = tokenRT["refresh_token"]
