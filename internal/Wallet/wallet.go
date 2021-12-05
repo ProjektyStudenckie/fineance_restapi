@@ -20,18 +20,29 @@ type RequestStructWalletGoal struct {
 	Goals   Goals `json:"goal,omitempty" bson:"goal ,omitempty"`
 }
 
+type RequestStructWalletRemittance struct {
+	Wallet Wallet     `json:"wallet,omitempty" bson:"wallet ,omitempty"`
+	Remittance   Remittance `json:"remittance,omitempty" bson:"remittance ,omitempty"`
+}
+
 type Wallet struct {
 	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Name string  				`json:"name,omitempty" bson:"name ,omitempty"`
+	Description string `json:"description,omitempty" bson:"description ,omitempty"`
 	Owner mongo.User  				`json:"owner,omitempty" bson:"owner ,omitempty"`
 	Currency string             `json:"currency,omitempty" bson:"currency ,omitempty"`
 	SubOwners  []mongo.User            `json:"subowners,omitempty" bson:"subowners,omitempty"`
 	WalletGoals []Goals		`json:"goals,omitempty" bson:"goals,omitempty"`
-	Value  int             `json:"value,omitempty" bson:"value,omitempty"`
+	Value  []Remittance             `json:"remittance,omitempty" bson:"remittance,omitempty"`
 }
 
 type Goals struct{
 	Name string  				`json:"name,omitempty" bson:"name ,omitempty"`
+	Date string 			`json:"date,omitempty" bson:"date ,omitempty"`
+	Value  int             `json:"value,omitempty" bson:"value,omitempty"`
+}
+
+type Remittance struct{
 	Date string 			`json:"date,omitempty" bson:"date ,omitempty"`
 	Value  int             `json:"value,omitempty" bson:"value,omitempty"`
 }
@@ -97,6 +108,25 @@ func RemoveGoal(response http.ResponseWriter, request *http.Request) {
 	_= collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
 	index:= posGoal(reqstruct.Goals,reqstruct.Wallet.WalletGoals)
 	wallet.WalletGoals = removeGoal(wallet.WalletGoals,index)
+	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+		wallet,
+	)
+	json.NewEncoder(response).Encode(true)
+}
+
+
+func AddRemittance(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+
+	var reqstruct RequestStructWalletRemittance
+	var wallet Wallet
+	_ = json.NewDecoder(request.Body).Decode(&reqstruct)
+	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+
+	_= collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	wallet.Value=append(wallet.Value, reqstruct.Remittance)
+
 	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
 		wallet,
 	)
