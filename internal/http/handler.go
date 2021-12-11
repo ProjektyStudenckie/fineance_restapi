@@ -29,6 +29,7 @@ func (h *Handler) SetupRoutes(){
 	h.Router.HandleFunc("/refresh_access", auth2.MethodAuth(auth2.Refresh,auth2.SecretRefresh)).Methods("GET")
 	h.Router.HandleFunc("/sub_wallets", auth2.MethodAuth(Wallet.GetSubWallets,auth2.SecretAccess)).Methods("GET")
 	h.Router.HandleFunc("/add_wallet",auth2.MethodAuth( Wallet.AddWallet,auth2.SecretAccess)).Methods("POST")
+	h.Router.HandleFunc("/remove_wallet",auth2.MethodAuth( Wallet.RemoveWallet,auth2.SecretAccess)).Methods("POST")
 	h.Router.HandleFunc("/wallets", auth2.MethodAuth(Wallet.GetWallets,auth2.SecretAccess)).Methods("GET")
 	h.Router.HandleFunc("/add_sub_owner", auth2.MethodAuth(Wallet.AddSubOwner,auth2.SecretAccess)).Methods("POST")
 	h.Router.HandleFunc("/updateWallet", auth2.MethodAuth(Wallet.UpdateWallet,auth2.SecretAccess)).Methods("POST")

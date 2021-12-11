@@ -60,6 +60,24 @@ func AddWallet(response http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(response).Encode(true)
 }
 
+func RemoveWallet(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+
+	var wallet Wallet
+
+	_ = json.NewDecoder(request.Body).Decode(&wallet)
+
+	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+
+	_, err := collection.DeleteOne(ctx, Wallet{ID: wallet.ID})
+	if err!= nil {
+		json.NewEncoder(response).Encode(false)
+	}
+	json.NewEncoder(response).Encode(true)
+
+}
+
 func AddSubOwner(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 
