@@ -44,6 +44,7 @@ type Goals struct{
 
 type Remittance struct{
 	Date string 			`json:"date,omitempty" bson:"date ,omitempty"`
+	Description string 			`json:"description,omitempty" bson:"description ,omitempty"`
 	Value  int             `json:"value,omitempty" bson:"value,omitempty"`
 }
 
