@@ -39,7 +39,7 @@ func (h *Handler) SetupRoutes(){
 	h.Router.HandleFunc("/add_remittance", auth2.MethodAuth(Wallet.AddRemittance,auth2.SecretAccess)).Methods("POST")
 	h.Router.HandleFunc("/stats", auth2.MethodAuth(webSockets2.TestSocket,auth2.SecretAccess))
 
-	http.ListenAndServe(":8080", h.Router)
+	http.ListenAndServe(":1332", h.Router)
 }
 
 

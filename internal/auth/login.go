@@ -14,7 +14,6 @@ func Login(response http.ResponseWriter, request *http.Request) {
 	username, pass, _ := request.BasicAuth()
 	var user mongo2.User
 	collection := mongo2.DataBaseCon.Client.Database("TestDB").Collection("Users")
-	fmt.Println()
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
 	cur := collection.FindOne(ctx, mongo2.User{Username: username}).Decode(&user)

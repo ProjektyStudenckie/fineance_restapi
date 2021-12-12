@@ -15,4 +15,5 @@ WORKDIR /app
 
 COPY --from=builder /app /app
 
+EXPOSE 1332
 CMD ["/app/projekt"]
