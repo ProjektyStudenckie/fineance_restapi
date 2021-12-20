@@ -93,7 +93,7 @@ func AddSubOwner(response http.ResponseWriter, request *http.Request) {
 	_= collection.FindOne(ctx,  bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	wallet.SubOwners=append(wallet.SubOwners, reqstruct.User)
 
-	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+	_,_ =collection.ReplaceOne(ctx,bson.M{"_id": wallet.ID},
 		wallet,
 	)
 	json.NewEncoder(response).Encode(true)
@@ -111,7 +111,7 @@ func AddGoal(response http.ResponseWriter, request *http.Request) {
 	_= collection.FindOne(ctx,  bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	wallet.WalletGoals=append(wallet.WalletGoals, reqstruct.Goals)
 
-	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+	_,_ =collection.ReplaceOne(ctx,bson.M{"_id":  wallet.ID},
 		wallet,
 	)
 	json.NewEncoder(response).Encode(true)
@@ -129,7 +129,7 @@ func RemoveGoal(response http.ResponseWriter, request *http.Request) {
 	_= collection.FindOne(ctx, bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	index:= posGoal(reqstruct.Goals,reqstruct.Wallet.WalletGoals)
 	wallet.WalletGoals = removeGoal(wallet.WalletGoals,index)
-	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+	_,_ =collection.ReplaceOne(ctx,bson.M{"_id":  wallet.ID},
 		wallet,
 	)
 	json.NewEncoder(response).Encode(true)
@@ -148,7 +148,7 @@ func AddRemittance(response http.ResponseWriter, request *http.Request) {
 	_= collection.FindOne(ctx,  bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	wallet.Value=append(wallet.Value, reqstruct.Remittance)
 
-	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+	_,_ =collection.ReplaceOne(ctx,bson.M{"_id": wallet.ID},
 		wallet,
 	)
 	json.NewEncoder(response).Encode(true)
@@ -186,7 +186,7 @@ func RemoveSubOwner(response http.ResponseWriter, request *http.Request) {
 	_= collection.FindOne(ctx,  bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	index:= pos(reqstruct.User,reqstruct.Wallet.SubOwners)
 	wallet.SubOwners = remove(wallet.SubOwners,index)
-	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+	_,_ =collection.ReplaceOne(ctx,bson.M{"_id": wallet.ID},
 		wallet,
 	)
 	json.NewEncoder(response).Encode(true)
