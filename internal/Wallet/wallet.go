@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"time"
@@ -71,7 +72,8 @@ func RemoveWallet(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	_, err := collection.DeleteOne(ctx, Wallet{ID: wallet.ID})
+	result, err := collection.DeleteOne(ctx, bson.M{"_id":wallet.ID})
+	fmt.Println(result.DeletedCount)
 	if err!= nil {
 		json.NewEncoder(response).Encode(false)
 	}
@@ -88,7 +90,7 @@ func AddSubOwner(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	_= collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	_= collection.FindOne(ctx,  bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	wallet.SubOwners=append(wallet.SubOwners, reqstruct.User)
 
 	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
@@ -106,7 +108,7 @@ func AddGoal(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	_= collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	_= collection.FindOne(ctx,  bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	wallet.WalletGoals=append(wallet.WalletGoals, reqstruct.Goals)
 
 	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
@@ -124,7 +126,7 @@ func RemoveGoal(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	_= collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	_= collection.FindOne(ctx, bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	index:= posGoal(reqstruct.Goals,reqstruct.Wallet.WalletGoals)
 	wallet.WalletGoals = removeGoal(wallet.WalletGoals,index)
 	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
@@ -143,7 +145,7 @@ func AddRemittance(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	_= collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	_= collection.FindOne(ctx,  bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	wallet.Value=append(wallet.Value, reqstruct.Remittance)
 
 	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
@@ -160,7 +162,7 @@ func UpdateWallet(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	_,err :=collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
+	_,err :=collection.ReplaceOne(ctx, bson.M{"_id": wallet.ID},
 		wallet,
 	)
 	if err!=nil {
@@ -181,7 +183,7 @@ func RemoveSubOwner(response http.ResponseWriter, request *http.Request) {
 	collection := mongo.DataBaseCon.Client.Database("TestDB").Collection("Wallets")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 
-	_= collection.FindOne(ctx, Wallet{ID: reqstruct.Wallet.ID}).Decode(&wallet)
+	_= collection.FindOne(ctx,  bson.M{"_id": reqstruct.Wallet.ID}).Decode(&wallet)
 	index:= pos(reqstruct.User,reqstruct.Wallet.SubOwners)
 	wallet.SubOwners = remove(wallet.SubOwners,index)
 	_,_ =collection.ReplaceOne(ctx,Wallet{ID: wallet.ID},
